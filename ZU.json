@@ -1,0 +1,71 @@
+{
+    "system": {
+        "name": "Zhenjiang University West Lecture Hall",
+        "code_folder_path": "src",
+        "code_entry_file": "main.py",
+        "layout_folder_path": "layout",
+        "sound_folder_path": "sound",
+        "rfile_folder_path": "rfile",
+        "irfile_folder_path": "ir",
+        "system_id": "3069",
+        "author": {
+            "name": "Rxw",
+            "email": "1276430450@qq.com"
+        },
+        "version": "0.0.3",
+        "primary_device_alias": "IPCP350"
+    },
+    "devices": [
+        {
+            "name": "IPCP Pro 350",
+            "part_number": "60-1417-01",
+            "alias": "IPCP350",
+            "network": {
+                "host_network_type": "LAN",
+                "interfaces": [
+                    {
+                        "address": "10.109.74.169",
+                        "type": "LAN"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "IPL Pro S3",
+            "part_number": "60-1413-01",
+            "alias": "IPLS3",
+            "network": {
+                "host_network_type": "LAN",
+                "interfaces": [
+                    {
+                        "address": "10.109.74.229",
+                        "type": "LAN"
+                    }
+                ]
+            }
+        },
+ {
+    "name": "TLP Pro 1025M",
+    "part_number": "60-1566-02",
+    "alias": "TLP1025M",
+    "extron_control_web_id": "0f26653d-70ec-40a8-b2e3-efa0209353e6",
+    "network": {
+        "host_network_type": "LAN",
+        "interfaces": [
+            {
+                "address": "10.109.74.232",
+                "type": "LAN"
+            }
+        ]
+    },
+    "ui": {
+        "layout_file": "XBGT.gdl",
+        "enable_click_sound": true,
+        "press_feedback": "none",
+        "thumb_change_report_interval": 0.1,
+        "thumb_to_fill_sync_time": 0.5
+    }
+ }
+    ],
+    "schemaVersion": "1.0.0"
+}
