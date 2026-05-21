@@ -2,7 +2,27 @@
 
 > Platform: Extron IPCP Pro 350 + ControlScript Extension for VS Code
 
-- [TOC]
+## Table of Contents
+
+- [Project Overview](#project-overview)
+- [System Architecture](#system-architecture)
+- [Hardware Device List](#hardware-device-list)
+- [Network Topology](#network-topology)
+- [Directory Structure](#directory-structure)
+- [Core Module Description](#core-module-description)
+  - [`main.py`](#mainpy)
+  - [`devices.py`](#devicespy)
+  - [`variables.py`](#variablespy)
+  - [`control/av.py`](#controlavpy)
+  - [`ui/tlp.py`](#uitlppy)
+- [UI Interface Description](#ui-interface-description)
+- [Communication Protocols](#communication-protocols)
+- [ThingsBoard IoT Integration](#thingsboard-iot-integration)
+- [Power On/Off Sequence](#power-onoff-sequence)
+- [Video Matrix Signal Routing](#video-matrix-signal-routing)
+- [Audio System](#audio-system)
+- [Environmental Sensor](#environmental-sensor)
+- [Deployment and Debugging](#deployment-and-debugging)
 
 ---
 
