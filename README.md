@@ -231,7 +231,7 @@ class AudioProcessor:
 
 ### `ui/tlp.py`
 
-Defines all interactive controls (Button, Slider, MESet) on the touch panel for unified event handler binding in `system.py`.
+Defines all interactive controls (Button, Slider, MESet) on the touch panel for unified event handler binding in `system.py`. Also includes bilingual button/MESet mapping dictionaries (`BUTTON_ZH_TO_EN`, `BUTTON_EN_TO_ZH`, `MESET_ZH_TO_EN`, `MESET_EN_TO_ZH`) for automatic Chinese-English UI state synchronization.
 
 ---
 

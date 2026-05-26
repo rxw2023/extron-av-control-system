@@ -165,3 +165,53 @@ mesMatrixInputButtons_E = MESet([
 mesMatrixOutputButtons_E = MESet([
     BTN_OUT_LED_E, BTN_OUT_RETURN_TV_E, BTN_OUT_LEFT_TV_E, BTN_OUT_RIGHT_TV_E, BTN_OUT_CAPTURE_E
 ])
+
+#===== Button Mapping for Bilingual Sync =====
+# Chinese -> English button mapping
+BUTTON_ZH_TO_EN = {
+    # LED Power
+    BTN_LED_ON: BTN_LED_ON_E,
+    BTN_LED_OFF: BTN_LED_OFF_E,
+    # TV Power
+    BTN_TV_ON: BTN_TV_ON_E,
+    BTN_TV_OFF: BTN_TV_OFF_E,
+    # Source Selection
+    BTN_PC: BTN_PC_E,
+    BTN_BYOD: BTN_BYOD_E,
+    BTN_DOC_CAM: BTN_DOC_CAM_E,
+    BTN_CAMERA: BTN_CAMERA_E,
+    # Matrix Input
+    BTN_IN_PC: BTN_IN_PC_E,
+    BTN_IN_BYOD: BTN_IN_BYOD_E,
+    BTN_IN_DOC: BTN_IN_DOC_E,
+    BTN_IN_CAMERA: BTN_IN_CAMERA_E,
+    BTN_IN_FLOOR: BTN_IN_FLOOR_E,
+    # Matrix Output
+    BTN_OUT_LED: BTN_OUT_LED_E,
+    BTN_OUT_RETURN_TV: BTN_OUT_RETURN_TV_E,
+    BTN_OUT_LEFT_TV: BTN_OUT_LEFT_TV_E,
+    BTN_OUT_RIGHT_TV: BTN_OUT_RIGHT_TV_E,
+    BTN_OUT_CAPTURE: BTN_OUT_CAPTURE_E,
+    # Mute All
+    BTN_MUTE_ALL: BTN_MUTE_ALL_E,
+    # Audio Mute Buttons
+    BTN_ARRAY_LOCAL_MUTE: BTN_ARRAY_LOCAL_MUTE_E,
+    BTN_ARRAY_REMOTE_MUTE: BTN_ARRAY_REMOTE_MUTE_E,
+    BTN_HANDHELD_MUTE: BTN_HANDHELD_MUTE_E,
+    BTN_HANDHELD_MUTE2: BTN_HANDHELD_MUTE2_E,
+    BTN_STEREO_MUTE: BTN_STEREO_MUTE_E,
+    BTN_WEBEX_MUTE: BTN_WEBEX_MUTE_E,
+    BTN_RECORD_MUTE: BTN_RECORD_MUTE_E,
+}
+# English -> Chinese button mapping
+BUTTON_EN_TO_ZH = {v: k for k, v in BUTTON_ZH_TO_EN.items()}
+
+# MESet pairing for bilingual sync
+MESET_ZH_TO_EN = {
+    mesLEDPowerButtons: mesLEDPowerButtons_E,
+    mesTVPowerButtons: mesTVPowerButtons_E,
+    mesSourceButtons: mesSourceButtons_E,
+    mesMatrixInputButtons: mesMatrixInputButtons_E,
+    mesMatrixOutputButtons: mesMatrixOutputButtons_E,
+}
+MESET_EN_TO_ZH = {v: k for k, v in MESET_ZH_TO_EN.items()}

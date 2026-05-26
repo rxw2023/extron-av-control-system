@@ -102,6 +102,31 @@ def OnSensorData(interface, data):
             thingsboard_sensor.send_telemetry(sensor_data)
         except:
             pass
+#================= Bilingual Button Sync Helper =================
+def _sync_button_state(btn, state):
+    """Sync button state to the other language's corresponding button and MESet"""
+    if btn in tlp.BUTTON_ZH_TO_EN:
+        target_btn = tlp.BUTTON_ZH_TO_EN[btn]
+        target_meset = None
+        for zh_me, en_me in tlp.MESET_ZH_TO_EN.items():
+            if btn in zh_me.Objects:
+                target_meset = en_me
+                break
+        if target_btn:
+            target_btn.SetState(state)
+        if target_meset:
+            target_meset.SetCurrent(target_btn)
+    elif btn in tlp.BUTTON_EN_TO_ZH:
+        target_btn = tlp.BUTTON_EN_TO_ZH[btn]
+        target_meset = None
+        for en_me, zh_me in tlp.MESET_EN_TO_ZH.items():
+            if btn in en_me.Objects:
+                target_meset = zh_me
+                break
+        if target_btn:
+            target_btn.SetState(state)
+        if target_meset:
+            target_meset.SetCurrent(target_btn)
 #================= Language Switch =================
 @event([tlp.BTN_START_LANGUAGE, tlp.BTN_START_LANGUAGE_E, tlp.BTN_HOME_LANGUAGE, tlp.BTN_HOME_LANGUAGE_E], 'Pressed')
 def OnLanguageSwitch(btn, state):
@@ -145,7 +170,7 @@ def OnPowerOnPressed(btn,state):
     dev.power_sequencer.Send(vars.POWER_SEQUENCER_ON)
     dev.relay_led.SetState(1)
     dev.TLP1025M.ShowPopup(tlp.POPUP_STARTING_UP)
-    time.sleep(10)
+    time.sleep(12)
     time.sleep(1)
     time.sleep(1)
     dev.tv_1.Send(vars.TV_POWER_ON)
@@ -164,8 +189,8 @@ def OnPowerOnPressed(btn,state):
     av.audio.recall_preset(1)
     time.sleep(4)
 
-    tlp.SLD_ARRAY_LOCAL.SetFill(-10.2)
-    tlp.SLD_ARRAY_LOCAL_E.SetFill(-10.2)
+    tlp.SLD_ARRAY_LOCAL.SetFill(-10)
+    tlp.SLD_ARRAY_LOCAL_E.SetFill(-10)
 
     tlp.SLD_ARRAY_REMOTE.SetFill(-8)
     tlp.SLD_ARRAY_REMOTE_E.SetFill(-8)
@@ -176,14 +201,14 @@ def OnPowerOnPressed(btn,state):
     tlp.SLD_HANDHELD2.SetFill(0)
     tlp.SLD_HANDHELD2_E.SetFill(0)
     
-    tlp.SLD_STEREO.SetFill(4.3)
-    tlp.SLD_STEREO_E.SetFill(4.3)
+    tlp.SLD_STEREO.SetFill(4.5)
+    tlp.SLD_STEREO_E.SetFill(4.5)
 
     tlp.SLD_WEBEX.SetFill(-3)
     tlp.SLD_WEBEX_E.SetFill(-3)
 
-    tlp.SLD_RECORD.SetFill(-4.3)
-    tlp.SLD_RECORD_E.SetFill(-4.3)
+    tlp.SLD_RECORD.SetFill(-4.5)
+    tlp.SLD_RECORD_E.SetFill(-4.5)
 
     time.sleep(1.6)
     time.sleep(8)
@@ -212,12 +237,12 @@ def OnPowerOffPressed(btn,state):
     dev.power_sequencer.Send(vars.POWER_SEQUENCER_OFF)
     dev.TLP1025M.ShowPopup(tlp.POPUP_POWERING_DOWN)
     time.sleep(15)
+    dev.TLP1025M.HideAllPopups()
+    dev.TLP1025M.ShowPage(tlp.PAGE_START)
     dev.tracking_camera.Set('Power','Off')
     thingsboard_LED.send_event({"LED Screen Status":"Off"})
     thingsboard_TV.send_event({"TV Status":"Off"})
     thingsboard_power.send_event({"Power Status": "Off"})
-    dev.TLP1025M.HideAllPopups()
-    dev.TLP1025M.ShowPage(tlp.PAGE_START)
 @event(tlp.BTN_POWER_ON_OK,'Pressed')
 def OnPowerOffOkPressed(btn,state):
     """Main / Hide Power Off Confirmation Popup"""
@@ -240,6 +265,7 @@ def OnLEDPowerPressed(btn, state):
         pass
     """Set Current Button as Active in MESet"""
     tlp.mesLEDPowerButtons.SetCurrent(btn)
+    _sync_button_state(btn, 1)
 #=============================================#
 @event(tlp.mesTVPowerButtons.Objects, 'Pressed')
 def OnTVPowerPressed(btn, state):
@@ -265,6 +291,7 @@ def OnTVPowerPressed(btn, state):
         dev.tv_3.Send(vars.TV_POWER_OFF)
         thingsboard_TV.send_event({"TV Status":"Off"})
     tlp.mesTVPowerButtons.SetCurrent(btn)
+    _sync_button_state(btn, 1)
 #=============================================#
 @event(tlp.BTN_HOME,'Pressed')
 def OnHomePressed(btn,state):
@@ -315,6 +342,7 @@ def OnSourcePressed(btn, state):
         martix.send_event({"Current Input Source":"Monitor Signal"})
         pass
     tlp.mesSourceButtons.SetCurrent(btn)
+    _sync_button_state(btn, 1)
 #=============================================#
 @event(tlp.BTN_VIDEO_SET,'Pressed')
 def OnVideoSetPressed(btn, state):
@@ -356,6 +384,7 @@ def OnInputSourcePressed(btn, state):
         matrixInputState = 'FLOOR'
     """Set Current Button as Active in MESet"""
     tlp.mesMatrixInputButtons.SetCurrent(btn)
+    _sync_button_state(btn, 1)
 #================ Matrix Routing Select Output Source =============#
 @event(tlp.mesMatrixOutputButtons.Objects, 'Pressed')
 def OnOutputTargetPressed(btn, state):
@@ -396,6 +425,7 @@ def OnOutputTargetPressed(btn, state):
             pass
     """Set Current Button as Active in MESet"""
     tlp.mesMatrixOutputButtons.SetCurrent(btn)
+    _sync_button_state(btn, 1)
 #================ Mute =============#
 @event(tlp.BTN_MUTE_ALL,'Pressed')
 def mute(btn,state):
@@ -406,6 +436,7 @@ def mute(btn,state):
     av.audio.set_output_mute(3, new_state)
     av.audio.set_output_mute(4, new_state)
     btn.SetState(1 if new_state == 'On' else 0)
+    _sync_button_state(btn, 1 if new_state == 'On' else 0)
 #===================== Array Mic Local (Channel 1) =====================
 tlp.SLD_ARRAY_LOCAL.SetRange(-36.0,-8.0,0.1)  
 @event(tlp.SLD_ARRAY_LOCAL, 'Changed')
@@ -418,6 +449,7 @@ def btn_array_local_mute_press(btn, state):
     new_state = 'On' if current == 'Off' else 'Off'
     av.audio.set_input_mute(1, new_state)
     btn.SetState(1 if new_state == 'On' else 0)
+    _sync_button_state(btn, 1 if new_state == 'On' else 0)
 @event(tlp.SLD_ARRAY_LOCAL, 'Released')
 def sld_array_local_mute_release(slider, state, val):
     av.audio.set_input_mute(1, 'Off')
@@ -434,6 +466,7 @@ def btn_array_remote_mute_press(btn, state):
     new_state = 'On' if current == 'Off' else 'Off'
     av.audio.set_input_mute(2, new_state)
     btn.SetState(1 if new_state == 'On' else 0)
+    _sync_button_state(btn, 1 if new_state == 'On' else 0)
 @event(tlp.SLD_ARRAY_REMOTE, 'Released')
 def sld_array_remote_mute_release(slider, state, val):
     av.audio.set_input_mute(2, 'Off')
@@ -450,6 +483,7 @@ def btn_handheld_mute_press(btn, state):
     new_state = 'On' if current == 'Off' else 'Off'
     av.audio.set_input_mute(4, new_state)
     btn.SetState(1 if new_state == 'On' else 0)
+    _sync_button_state(btn, 1 if new_state == 'On' else 0)
 @event(tlp.SLD_HANDHELD, 'Released')
 def sld_handheld_mute_release(slider, state, val):
     av.audio.set_input_mute(4, 'Off')
@@ -466,6 +500,7 @@ def btn_handheld_mute2_press(btn, state):
     new_state = 'On' if current == 'Off' else 'Off'
     av.audio.set_input_mute(5, new_state)
     btn.SetState(1 if new_state == 'On' else 0)
+    _sync_button_state(btn, 1 if new_state == 'On' else 0)
 @event(tlp.SLD_HANDHELD2, 'Released')
 def sld_handheld_mute2_release(slider, state, val):
     av.audio.set_input_mute(5, 'Off')
@@ -484,6 +519,7 @@ def btn_stereo_mute_press(btn, state):
     av.audio.set_input_mute(6, new_state)
     av.audio.set_input_mute(7, new_state)
     btn.SetState(1 if new_state == 'On' else 0)
+    _sync_button_state(btn, 1 if new_state == 'On' else 0)
 @event(tlp.SLD_STEREO, 'Released')
 def sld_stereo_mute_release(slider, state, val):
     av.audio.set_input_mute(6, 'Off')
@@ -501,6 +537,7 @@ def btn_webex_mute_press(btn, state):
     new_state = 'On' if current == 'Off' else 'Off'
     av.audio.set_output_mute(7, new_state)
     btn.SetState(1 if new_state == 'On' else 0)
+    _sync_button_state(btn, 1 if new_state == 'On' else 0)
 @event(tlp.SLD_WEBEX, 'Released')
 def sld_webex_mute_release(slider, state, val):
     av.audio.set_output_mute(7, 'Off')
@@ -517,6 +554,7 @@ def btn_record_mute_press(btn, state):
     new_state = 'On' if current == 'Off' else 'Off'
     av.audio.set_output_mute(8, new_state)
     btn.SetState(1 if new_state == 'On' else 0)
+    _sync_button_state(btn, 1 if new_state == 'On' else 0)
 @event(tlp.SLD_RECORD, 'Released')
 def sld_record_mute_release(slider, state, val):
     av.audio.set_output_mute(8, 'Off')
@@ -544,7 +582,7 @@ def OnPowerOnPressed_EN(btn,state):
     dev.power_sequencer.Send(vars.POWER_SEQUENCER_ON)
     dev.relay_led.SetState(1)
     dev.TLP1025M.ShowPopup(tlp.POPUP_STARTING_UP_E)
-    time.sleep(10)
+    time.sleep(12)
     time.sleep(1)
     time.sleep(1)
     dev.tv_1.Send(vars.TV_POWER_ON)
@@ -563,8 +601,8 @@ def OnPowerOnPressed_EN(btn,state):
     av.audio.recall_preset(1)
     time.sleep(4)
 
-    tlp.SLD_ARRAY_LOCAL.SetFill(-10.2)
-    tlp.SLD_ARRAY_LOCAL_E.SetFill(-10.2)
+    tlp.SLD_ARRAY_LOCAL.SetFill(-10)
+    tlp.SLD_ARRAY_LOCAL_E.SetFill(-10)
 
     tlp.SLD_ARRAY_REMOTE.SetFill(-8)
     tlp.SLD_ARRAY_REMOTE_E.SetFill(-8)
@@ -575,14 +613,14 @@ def OnPowerOnPressed_EN(btn,state):
     tlp.SLD_HANDHELD2.SetFill(0)
     tlp.SLD_HANDHELD2_E.SetFill(0)
     
-    tlp.SLD_STEREO.SetFill(4.3)
-    tlp.SLD_STEREO_E.SetFill(4.3)
+    tlp.SLD_STEREO.SetFill(4.5)
+    tlp.SLD_STEREO_E.SetFill(4.5)
 
     tlp.SLD_WEBEX.SetFill(-3)
     tlp.SLD_WEBEX_E.SetFill(-3)
 
-    tlp.SLD_RECORD.SetFill(-4.3)
-    tlp.SLD_RECORD_E.SetFill(-4.3)
+    tlp.SLD_RECORD.SetFill(-4.5)
+    tlp.SLD_RECORD_E.SetFill(-4.5)
 
     time.sleep(1.6)
     time.sleep(8)
@@ -612,11 +650,11 @@ def OnPowerOffPressed_EN(btn,state):
     dev.TLP1025M.ShowPopup(tlp.POPUP_POWERING_DOWN_E)
     time.sleep(15)
     dev.tracking_camera.Set('Power','Off')
+    dev.TLP1025M.HideAllPopups()
+    dev.TLP1025M.ShowPage(tlp.PAGE_START)
     thingsboard_LED.send_event({"LED Screen Status":"Off"})
     thingsboard_TV.send_event({"TV Status":"Off"})
     thingsboard_power.send_event({"Power Status": "Off"})
-    dev.TLP1025M.HideAllPopups()
-    dev.TLP1025M.ShowPage(tlp.PAGE_START)
 @event(tlp.BTN_POWER_ON_OK_E,'Pressed')
 def OnPowerOffOkPressed_EN(btn,state):
     """Main / Hide Power Off Confirmation Popup"""
@@ -639,6 +677,7 @@ def OnLEDPowerPressed_EN(btn, state):
         pass
     """Set Current Button as Active in MESet"""
     tlp.mesLEDPowerButtons_E.SetCurrent(btn)
+    _sync_button_state(btn, 1)
 #=============================================#
 @event(tlp.mesTVPowerButtons_E.Objects, 'Pressed')
 def OnTVPowerPressed_EN(btn, state):
@@ -664,6 +703,7 @@ def OnTVPowerPressed_EN(btn, state):
         dev.tv_3.Send(vars.TV_POWER_OFF)
         thingsboard_TV.send_event({"TV Status":"Off"})
     tlp.mesTVPowerButtons_E.SetCurrent(btn)
+    _sync_button_state(btn, 1)
 #=============================================#
 @event(tlp.BTN_HOME_E,'Pressed')
 def OnHomePressed_EN(btn,state):
@@ -714,6 +754,7 @@ def OnSourcePressed_EN(btn, state):
         martix.send_event({"Current Input Source":"Monitor Signal"})
         pass
     tlp.mesSourceButtons_E.SetCurrent(btn)
+    _sync_button_state(btn, 1)
 #=============================================#
 @event(tlp.BTN_VIDEO_SET_E,'Pressed')
 def OnVideoSetPressed_EN(btn, state):
@@ -755,6 +796,7 @@ def OnInputSourcePressed_EN(btn, state):
         matrixInputState = 'FLOOR'
     """Set Current Button as Active in MESet"""
     tlp.mesMatrixInputButtons_E.SetCurrent(btn)
+    _sync_button_state(btn, 1)
 #================ Matrix Routing Select Output Source =============#
 @event(tlp.mesMatrixOutputButtons_E.Objects, 'Pressed')
 def OnOutputTargetPressed_EN(btn, state):
@@ -795,6 +837,7 @@ def OnOutputTargetPressed_EN(btn, state):
             pass
     """Set Current Button as Active in MESet"""
     tlp.mesMatrixOutputButtons_E.SetCurrent(btn)
+    _sync_button_state(btn, 1)
 #================ Mute =============#
 @event(tlp.BTN_MUTE_ALL_E,'Pressed')
 def mute_EN(btn,state):
@@ -805,6 +848,7 @@ def mute_EN(btn,state):
     av.audio.set_output_mute(3, new_state)
     av.audio.set_output_mute(4, new_state)
     btn.SetState(1 if new_state == 'On' else 0)
+    _sync_button_state(btn, 1 if new_state == 'On' else 0)
 #===================== Array Mic Local (Channel 1) =====================
 tlp.SLD_ARRAY_LOCAL_E.SetRange(-36.0,-8.0,0.1)  
 @event(tlp.SLD_ARRAY_LOCAL_E, 'Changed')
@@ -817,6 +861,7 @@ def btn_array_local_mute_press_EN(btn, state):
     new_state = 'On' if current == 'Off' else 'Off'
     av.audio.set_input_mute(1, new_state)
     btn.SetState(1 if new_state == 'On' else 0)
+    _sync_button_state(btn, 1 if new_state == 'On' else 0)
 @event(tlp.SLD_ARRAY_LOCAL_E, 'Released')
 def sld_array_local_mute_release_EN(slider, state, val):
     av.audio.set_input_mute(1, 'Off')
@@ -833,6 +878,7 @@ def btn_array_remote_mute_press_EN(btn, state):
     new_state = 'On' if current == 'Off' else 'Off'
     av.audio.set_input_mute(2, new_state)
     btn.SetState(1 if new_state == 'On' else 0)
+    _sync_button_state(btn, 1 if new_state == 'On' else 0)
 @event(tlp.SLD_ARRAY_REMOTE_E, 'Released')
 def sld_array_remote_mute_release_EN(slider, state, val):
     av.audio.set_input_mute(2, 'Off')
@@ -849,6 +895,7 @@ def btn_handheld_mute_press_EN(btn, state):
     new_state = 'On' if current == 'Off' else 'Off'
     av.audio.set_input_mute(4, new_state)
     btn.SetState(1 if new_state == 'On' else 0)
+    _sync_button_state(btn, 1 if new_state == 'On' else 0)
 @event(tlp.SLD_HANDHELD_E, 'Released')
 def sld_handheld_mute_release_EN(slider, state, val):
     av.audio.set_input_mute(4, 'Off')
@@ -865,6 +912,7 @@ def btn_handheld_mute2_press_EN(btn, state):
     new_state = 'On' if current == 'Off' else 'Off'
     av.audio.set_input_mute(5, new_state)
     btn.SetState(1 if new_state == 'On' else 0)
+    _sync_button_state(btn, 1 if new_state == 'On' else 0)
 @event(tlp.SLD_HANDHELD2_E, 'Released')
 def sld_handheld_mute2_release_EN(slider, state, val):
     av.audio.set_input_mute(5, 'Off')
@@ -883,6 +931,7 @@ def btn_stereo_mute_press_EN(btn, state):
     av.audio.set_input_mute(6, new_state)
     av.audio.set_input_mute(7, new_state)
     btn.SetState(1 if new_state == 'On' else 0)
+    _sync_button_state(btn, 1 if new_state == 'On' else 0)
 @event(tlp.SLD_STEREO_E, 'Released')
 def sld_stereo_mute_release_EN(slider, state, val):
     av.audio.set_input_mute(6, 'Off')
@@ -900,6 +949,7 @@ def btn_webex_mute_press_EN(btn, state):
     new_state = 'On' if current == 'Off' else 'Off'
     av.audio.set_output_mute(7, new_state)
     btn.SetState(1 if new_state == 'On' else 0)
+    _sync_button_state(btn, 1 if new_state == 'On' else 0)
 @event(tlp.SLD_WEBEX_E, 'Released')
 def sld_webex_mute_release_EN(slider, state, val):
     av.audio.set_output_mute(7, 'Off')
@@ -916,6 +966,7 @@ def btn_record_mute_press_EN(btn, state):
     new_state = 'On' if current == 'Off' else 'Off'
     av.audio.set_output_mute(8, new_state)
     btn.SetState(1 if new_state == 'On' else 0)
+    _sync_button_state(btn, 1 if new_state == 'On' else 0)
 @event(tlp.SLD_RECORD_E, 'Released')
 def sld_record_mute_release_EN(slider, state, val):
     av.audio.set_output_mute(8, 'Off')
