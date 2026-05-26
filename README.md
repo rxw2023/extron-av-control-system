@@ -1,4 +1,4 @@
-<p align="right"><a href="README_zh.md">中文</a></p>
+<p align="center">English | <a href="README_zh.md">中文</a></p>
 
 # Zhejiang University West Lecture Hall Extron Control System
 

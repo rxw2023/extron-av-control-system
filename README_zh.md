@@ -1,4 +1,4 @@
-<p align="right"><a href="README.md">en</a></p>
+<p align="center"><a href="README.md">English</a> | 中文</p>
 
 # 浙江大学西报告厅 Extron 中控系统
 
